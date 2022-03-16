@@ -71,7 +71,7 @@ async fn render(
         .get(&config.url)
         .insert_header((
             "User-Agent",
-            "currencies (+https://metacode.biz/@wiktor#golinks3)",
+            "golinks (+https://metacode.biz/@wiktor#golinks3)",
         ))
         .insert_header(("Accept", "application/json"))
         .insert_header(("Cookie", format!("__Secure-Token={}", config.token)))
