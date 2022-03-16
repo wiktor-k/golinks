@@ -85,8 +85,8 @@ async fn render(
         .get("Host")
         .and_then(|v| v.to_str().ok())
         .unwrap_or_default();
+
     let key = format!("{}/{}", host, slug);
-    eprintln!("key = {}", key);
 
     if let Some(location) = &links.inner.get(&key) {
         Ok(HttpResponse::Found()
