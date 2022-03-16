@@ -1,0 +1,17 @@
+#+TITLE: Currencies
+
+This is a sample application utilizing both =actix_web= and =awc=.
+
+* Running
+
+=cargo run= will start the application listening on localhost's port 8080.
+
+=curl localhost:8080= will trigger the only action available: rendering of [[https://lametric.com/][LaMetric]] frames.
+
+* Building
+
+The application can be build for both AMD64 and AArch64/ARM64 architectures using [[https://docs.docker.com/develop/develop-images/build_enhancements/][Docker BuildKit]]:
+
+#+BEGIN_SRC sh
+docker buildx build --push --platform linux/amd64,linux/arm64 -t wiktork/currencies:8 .
+#+END_SRC
