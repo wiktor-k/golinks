@@ -62,11 +62,36 @@ struct NotFound {
     key: String,
 }
 
-async fn render(
+async fn render_path(
     request: HttpRequest,
     slug: web::Path<String>,
     config: web::Data<Args>,
     client: Data<Client>,
+) -> Result<HttpResponse, Error> {
+    let host = request
+        .headers()
+        .get("Host")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or_default();
+
+    let key = format!("{}/{}", host, slug);
+
+    render_for_uri(config, client, key).await
+}
+
+async fn render_query(
+    request: HttpRequest,
+    config: web::Data<Args>,
+    client: Data<Client>,
+) -> Result<HttpResponse, Error> {
+    let key = request.query_string();
+    render_for_uri(config, client, key.into()).await
+}
+
+async fn render_for_uri(
+    config: web::Data<Args>,
+    client: Data<Client>,
+    key: String,
 ) -> Result<HttpResponse, Error> {
     let links = client
         .get(&config.url)
@@ -80,14 +105,6 @@ async fn render(
         .await?
         .json::<Links>()
         .await?;
-
-    let host = request
-        .headers()
-        .get("Host")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or_default();
-
-    let key = format!("{}/{}", host, slug);
 
     if let Some(location) = &links.inner.get(&key) {
         Ok(HttpResponse::Found()
@@ -139,8 +156,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         App::new()
             .app_data(Data::new(Client::default()))
             .app_data(Data::new(args.clone()))
+            .route("/", web::get().to(render_query))
             .route("/healthz", web::get().to(healthz))
-            .route("/{slug}", web::get().to(render))
+            .route("/{slug}", web::get().to(render_path))
             .wrap(Logger::default())
     })
     .bind(bind)?
