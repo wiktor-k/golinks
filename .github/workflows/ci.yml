@@ -27,35 +27,15 @@ jobs:
   tests:
     name: Unit tests
     runs-on: ubuntu-latest
-    env:
-      CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS: "-Clink-self-contained=yes -Clinker=rust-lld"
-      AR_aarch64_unknown_linux_musl: llvm-ar
-      CC_aarch64_unknown_linux_musl: clang
     steps:
       - uses: actions/checkout@v2
-      - name: Install AArch64 toolchain
-        run: rustup target add aarch64-unknown-linux-musl
       - name: Build and test
-        run: cargo build --verbose --bin main --target aarch64-unknown-linux-musl && cargo test --verbose --lib
+        run: cargo build --verbose && cargo test --verbose --lib
        
   lints:
     name: Clippy lints
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install SDL2
-        run: sudo apt-get update && sudo apt-get install libsdl2-dev
       - name: Check for lints
-        run: cargo clippy --features simulator -- -D warnings
-
-  ete:
-    name: End-to-end tests
-    runs-on: ubuntu-latest
-    env:
-      EG_SIMULATOR_CHECK: docs/screenshot.png
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install SDL2
-        run: sudo apt-get update && sudo apt-get install libsdl2-dev
-      - name: Run end-to-end tests
-        run: cargo run --features simulator --bin simulate
+        run: cargo clippy -- -D warnings
