@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build and test
-        run: cargo build --verbose && cargo test --verbose --lib
+        run: cargo build --verbose && cargo test --verbose
        
   lints:
     name: Clippy lints
