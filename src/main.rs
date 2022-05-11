@@ -14,7 +14,7 @@ struct Args {
     #[clap(env = "TOKEN_FILE")]
     token_file: Option<PathBuf>,
 
-    #[clap(env = "BIND", default_value = "tcp://127.0.0.1:8080")]
+    #[clap(env = "HOST", default_value = "tcp://127.0.0.1:8080")]
     bind: Binding,
 }
 
