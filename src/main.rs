@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(token_file) = &args.token_file {
         args.token = {
             use std::io::prelude::*;
-            let mut f = std::fs::File::open(&token_file)?;
+            let mut f = std::fs::File::open(token_file)?;
             let mut buffer = vec![];
             f.read_to_end(&mut buffer)?;
             String::from_utf8_lossy(&buffer).to_string()
