@@ -109,6 +109,7 @@ async fn render_for_uri(
     if let Some(location) = &links.inner.get(&key) {
         Ok(HttpResponse::Found()
             .append_header(("Location", &location.href[..]))
+            .append_header(("Access-Control-Allow-Origin", "*"))
             .append_header(("X-Collation-Id", uuid::Uuid::new_v4().to_string()))
             .body(""))
     } else {
