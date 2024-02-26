@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM rust:1.68 AS rust
+FROM --platform=$BUILDPLATFORM rust:1.76 AS rust
 
 # cross-compile using clang/llvm: https://github.com/briansmith/ring/issues/1414#issuecomment-1055177218
 RUN apt-get update && apt-get -y install musl-tools clang llvm
@@ -37,7 +37,7 @@ RUN cp target/$(cat /target)/release/main .
 
 RUN sha256sum main
 
-FROM alpine:3.17
+FROM alpine:3.19.1
 ENV \
     # Show full backtraces for crashes.
     RUST_BACKTRACE=full
