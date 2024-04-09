@@ -28,34 +28,19 @@ struct Links {
     inner: HashMap<String, Link>,
 }
 
-#[derive(Debug)]
-struct Error;
+#[derive(Debug, thiserror::Error)]
+enum Error {
+    #[error("Error when sending request: {0}")]
+    SendRequest(#[from] SendRequestError),
+
+    #[error("JSON is invalid: {0}")]
+    Json(#[from] JsonPayloadError),
+
+    #[error("Serde deserialization error: {0}")]
+    Serde(#[from] serde_json::Error),
+}
 
 impl actix_web::error::ResponseError for Error {}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
-    }
-}
-
-impl From<SendRequestError> for Error {
-    fn from(_: SendRequestError) -> Self {
-        Self
-    }
-}
-
-impl From<JsonPayloadError> for Error {
-    fn from(_: JsonPayloadError) -> Self {
-        Self
-    }
-}
-
-impl From<serde_json::Error> for Error {
-    fn from(_: serde_json::Error) -> Self {
-        Self
-    }
-}
 
 #[derive(Debug, Serialize)]
 struct NotFound {
