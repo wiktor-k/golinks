@@ -78,6 +78,11 @@ async fn render_for_uri(
     client: Data<Client>,
     key: String,
 ) -> Result<HttpResponse, Error> {
+    log::debug!(
+        "Sending a request to {} with token {}",
+        config.0,
+        &config.1[0..4]
+    );
     let links = client
         .get(&config.0)
         .insert_header((
