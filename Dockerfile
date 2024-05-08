@@ -1,5 +1,7 @@
 FROM --platform=$BUILDPLATFORM rust:1.78.0@sha256:0dd183faf7bc5b9b8efe81cfd42701a5283577520b185b511e322e5bf52f8fc7 AS rust
 
+ARG SOURCE_DATE_EPOCH
+
 # cross-compile using clang/llvm: https://github.com/briansmith/ring/issues/1414#issuecomment-1055177218
 RUN apt-get update && apt-get -y install musl-tools clang llvm
 
@@ -37,7 +39,8 @@ RUN cp target/$(cat /target)/release/main .
 
 RUN sha256sum main
 
-FROM alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+FROM alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b AS alpine
+ARG SOURCE_DATE_EPOCH
 ENV \
     # Show full backtraces for crashes.
     RUST_BACKTRACE=full
@@ -47,6 +50,16 @@ RUN apk add --no-cache \
     && mkdir /var/cache/apk
 WORKDIR /app
 COPY --from=rust /app/main ./
+
+# See: https://github.com/moby/buildkit/blob/master/docs/build-repro.md
+# Limit the timestamp upper bound to SOURCE_DATE_EPOCH.
+# Workaround for https://github.com/moby/buildkit/issues/3180
+#RUN find /$( ls / | grep -E -v "^(dev|mnt|proc|sys)$" ) | xargs touch -d "@${SOURCE_DATE_EPOCH}" -h || #true
+
+# Squash the entire stage for resetting the whiteout timestamps.
+# Workaround for https://github.com/moby/buildkit/issues/3168
+#FROM scratch
+#COPY --from=alpine / /
 
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/app/main"]
