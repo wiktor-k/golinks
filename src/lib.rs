@@ -127,6 +127,7 @@ pub fn start(args: (String, String), listener: Listener) -> std::io::Result<Serv
     let server = match listener {
         Listener::Tcp(listener) => server.listen(listener)?,
         Listener::Unix(listener) => server.listen_uds(listener)?,
+        _ => return Err(std::io::Error::other("not supported")),
     };
 
     Ok(server.run())
