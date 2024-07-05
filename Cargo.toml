@@ -18,6 +18,10 @@ service-binding = "3.0.0"
 thiserror = "1.0.60"
 log = "0.4.21"
 
+[profile.release]
+codegen-units = 1
+lto = true
+
 [dev-dependencies]
 actix-rt = "2.9"
 
