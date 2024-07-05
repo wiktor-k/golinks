@@ -36,6 +36,7 @@ RUN cargo build --release --target $(cat /target)
 RUN cp target/$(cat /target)/release/main .
 
 RUN sha256sum main
+RUN ls -la main
 
 FROM alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
 ENV \
