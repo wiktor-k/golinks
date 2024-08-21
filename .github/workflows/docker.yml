@@ -3,9 +3,14 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: archlinux
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup docker on Arch
+        run: pacman -Sy --needed --noconfirm archlinux-keyring && pacman -Syu --needed --noconfirm docker
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
