@@ -12,6 +12,11 @@ jobs:
       - name: Setup docker on Arch
         run: pacman -Sy --needed --noconfirm archlinux-keyring && pacman -Syu --needed --noconfirm docker
 
+      - name: Set up Docker
+        uses: crazy-max/ghaction-setup-docker@v3
+        with:
+          version: v27.1.2
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
